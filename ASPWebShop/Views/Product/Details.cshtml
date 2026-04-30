@@ -1,0 +1,122 @@
+﻿@model WebShop.Domain.ViewModel.ProductModel.ProductDetailViewModel
+
+@{
+    ViewData["Title"] = Model.Name;
+    var userRole = ViewBag.UserRole?.ToString();
+}
+
+<div class="product-detail-container">
+    <a asp-action="MainMenu" class="back-link">← В каталог</a>
+
+    <div class="product-detail-layout">
+        <div class="product-gallery">
+            @if (!string.IsNullOrEmpty(Model.MainImageUrl))
+            {
+                <div class="gallery-main">
+                    <img id="mainImage" src="@Model.MainImageUrl" alt="@Model.Name" />
+                </div>
+            }
+            else
+            {
+                <div class="gallery-main no-image-large">Нет изображения</div>
+            }
+
+            @if (Model.Images != null && Model.Images.Any())
+            {
+                <div class="gallery-thumbs">
+                    @foreach (var imageUrl in Model.Images)
+                    {
+                        <div class="gallery-thumb @(imageUrl == Model.MainImageUrl ? "active" : "")"
+                             onclick="document.getElementById('mainImage').src='@imageUrl'">
+                            <img src="@imageUrl" alt="@Model.Name" />
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="product-info">
+            <span class="product-category-badge">@Model.CategoryName</span>
+            <h1 class="product-title">@Model.Name</h1>
+            
+            <div class="product-price-block">
+                <span class="product-price">@Model.Price.ToString("C")</span>
+                <span class="product-stock @(Model.StockQuantity > 0 ? "in-stock" : "out-of-stock")">
+                    @(Model.StockQuantity > 0 ? $"В наличии: {Model.StockQuantity} шт." : "Нет в наличии")
+                </span>
+            </div>
+
+            <div class="product-description">
+                <h3>Описание</h3>
+                <p>@(string.IsNullOrEmpty(Model.Description) ? "Описание отсутствует" : Model.Description)</p>
+            </div>
+
+            <div class="product-actions">
+                @if (Model.StockQuantity > 0)
+                {
+                    <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                        <input type="hidden" name="productId" value="@Model.Id" />
+                        <div class="quantity-block">
+                            <label>Количество:</label>
+                            <div class="quantity-control">
+                                <button type="button" class="qty-btn qty-minus">−</button>
+                                <input type="number" name="quantity" value="1" min="1" max="@Model.StockQuantity" class="qty-input" />
+                                <button type="button" class="qty-btn qty-plus">+</button>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-add-to-cart-large">🛒 Добавить в корзину</button>
+                    </form>
+                }
+
+                @if (userRole == "Seller" || userRole == "Administrator")
+                {
+                    <div class="seller-actions">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-edit-product">✏️ Редактировать</a>
+                    </div>
+                }
+            </div>
+
+            <div class="seller-info">
+                <h3>Продавец</h3>
+                <div class="seller-card">
+                    <div class="seller-avatar">
+                        @(Model.SellerName?.Length > 0 ? Model.SellerName.Substring(0, 2).ToUpper() : "??")
+                    </div>
+                    <div class="seller-details">
+                        <span class="seller-name">@Model.SellerName</span>
+                        @if (!string.IsNullOrEmpty(Model.SellerDescription))
+                        {
+                            <span class="seller-desc">@Model.SellerDescription</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Кнопки +/− для количества
+        document.querySelectorAll('.qty-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = this.parentElement.querySelector('.qty-input');
+                const max = parseInt(input.max) || 100;
+                
+                if (this.classList.contains('qty-plus')) {
+                    input.value = Math.min(parseInt(input.value) + 1, max);
+                } else {
+                    input.value = Math.max(parseInt(input.value) - 1, 1);
+                }
+            });
+        });
+
+        // Переключение активной миниатюры
+        document.querySelectorAll('.gallery-thumb img').forEach(img => {
+            img.addEventListener('click', function() {
+                document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+                this.parentElement.classList.add('active');
+            });
+        });
+    </script>
+}

@@ -1,0 +1,101 @@
+﻿@model WebShop.Domain.ViewModel.ProductModel.CreateProductViewModel
+
+@{
+    ViewData["Title"] = "Добавить товар";
+}
+
+<div class="create-product-container">
+    <div class="create-product-card">
+        <h1 class="create-title">Добавить товар</h1>
+
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+            <div class="form-group">
+                <label asp-for="Name">Название товара</label>
+                <input asp-for="Name" type="text" placeholder="Введите название" />
+                <span asp-validation-for="Name" class="field-validation-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Description">Описание</label>
+                <textarea asp-for="Description" rows="5" placeholder="Опишите товар"></textarea>
+                <span asp-validation-for="Description" class="field-validation-error"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group form-half">
+                    <label asp-for="Price">Цена (₽)</label>
+                    <input asp-for="Price" type="number" step="0.01" min="0.01" placeholder="0.00" />
+                    <span asp-validation-for="Price" class="field-validation-error"></span>
+                </div>
+
+                <div class="form-group form-half">
+                    <label asp-for="StockQuantity">Количество на складе</label>
+                    <input asp-for="StockQuantity" type="number" min="0" placeholder="0" />
+                    <span asp-validation-for="StockQuantity" class="field-validation-error"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CategoryId">Категория</label>
+                <select asp-for="CategoryId">
+                    <option value="">Выберите категорию...</option>
+                    @if (ViewBag.Categories != null)
+                    {
+                        @foreach (var category in ViewBag.Categories)
+                        {
+                            <option value="@category.Id">@category.Name</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="CategoryId" class="field-validation-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label>Главное изображение</label>
+                <div class="file-upload">
+                    <input type="file" name="mainImage" accept="image/*" class="file-input" id="mainImage" />
+                    <label for="mainImage" class="file-label">
+                        <span id="mainImageName">Выберите файл</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Дополнительные изображения</label>
+                <div class="file-upload">
+                    <input type="file" name="additionalImages" accept="image/*" multiple class="file-input" id="additionalImages" />
+                    <label for="additionalImages" class="file-label">
+                        <span id="additionalImagesName">Выберите файлы</span>
+                    </label>
+                </div>
+                <small class="file-hint">Можно выбрать несколько файлов</small>
+            </div>
+
+            <div class="form-actions">
+                <a asp-action="MyProducts" class="btn-cancel">Отмена</a>
+                <button type="submit" class="btn-submit">Добавить товар</button>
+            </div>
+        </form>
+    </div>
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+        <script>
+                // Показываем имя выбранного файла
+                document.getElementById('mainImage').addEventListener('change', function() {
+                    var name = this.files[0] ? this.files[0].name : 'Выберите файл';
+                    document.getElementById('mainImageName').textContent = name;
+                });
+
+                document.getElementById('additionalImages').addEventListener('change', function() {
+                    var count = this.files.length;
+                    var name = count > 0 ? 'Выбрано файлов: ' + count : 'Выберите файлы';
+                    document.getElementById('additionalImagesName').textContent = name;
+                });
+        </script>
+    }
+</div>

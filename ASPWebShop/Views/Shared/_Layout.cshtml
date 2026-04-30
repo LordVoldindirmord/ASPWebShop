@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - WebShop</title>
+    <link rel="stylesheet" href="~/css/main.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="header">
+        <div class="header-container">
+            <a asp-controller="Product" asp-action="MainMenu" class="logo">WebShop</a>
+            
+            <div class="search-bar">
+                <form asp-controller="Product" asp-action="Search" method="get" class="search-form">
+                    <input type="text" name="searchTerm" class="search-input" placeholder="Поиск товаров..." />
+                    <button type="submit" class="search-button">Поиск</button>
+                </form>
+            </div>
+
+            <nav class="nav-links">
+                @{
+                    var userRole = Context.Items["UserRole"]?.ToString();
+                }
+
+                <a asp-controller="Product" asp-action="MainMenu" class="nav-link">Каталог</a>
+                <a asp-controller="Cart" asp-action="Cart" class="nav-link">Корзина</a>
+                <a asp-controller="Order" asp-action="MyOrders" class="nav-link">Заказы</a>
+
+                @if (userRole == "Seller")
+                {
+                    <a asp-controller="Product" asp-action="MyProducts" class="nav-link">Мои товары</a>
+                }
+
+                @if (userRole == "Administrator")
+                {
+                    <a asp-controller="Admin" asp-action="Users" class="nav-link nav-link-admin">Админ-панель</a>
+                }
+
+                <a asp-controller="User" asp-action="Profile" class="nav-link">Профиль</a>
+                <a asp-controller="User" asp-action="Logout" class="nav-link nav-link-logout">Выйти</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-error">
+                @TempData["Error"]
+            </div>
+        }
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success">
+                @TempData["Success"]
+            </div>
+        }
+
+        @RenderBody()
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 WebShop. Все права защищены.</p>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

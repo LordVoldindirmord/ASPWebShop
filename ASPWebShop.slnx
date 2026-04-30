@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/DAL/">
+    <Project Path="WebShop.DAL/WebShop.DAL.csproj" Id="d3f82ba7-e5bc-441f-9066-00c89bb7aaf9" />
+  </Folder>
+  <Folder Name="/Domain/">
+    <Project Path="WebShop.Domain/WebShop.Domain.csproj" Id="4cfb6aa6-b634-4db0-817b-dcadcc32e68c" />
+  </Folder>
+  <Folder Name="/Service/">
+    <Project Path="WebShop.Service/WebShop.Service.csproj" Id="c078c500-ed46-4b43-90f7-0ab50b5bfb11" />
+  </Folder>
+  <Project Path="ASPWebShop/ASPWebShop.csproj" />
+</Solution>

@@ -1,0 +1,32 @@
+﻿@model WebShop.Domain.ViewModel.OrderModel.OrderViewModel
+@{
+    ViewData["Title"] = "Заказ оформлен";
+}
+
+<div class="success-container">
+    <div class="success-card">
+        <div class="success-icon">✅</div>
+        <h1>Заказ успешно оформлен!</h1>
+        <p class="success-order-number">Заказ №@Model.Id</p>
+        
+        <div class="success-details">
+            <div class="success-row">
+                <span>Сумма</span>
+                <strong>@Model.TotalAmount.ToString("C")</strong>
+            </div>
+            <div class="success-row">
+                <span>Адрес доставки</span>
+                <span>@Model.ShippingAddress</span>
+            </div>
+            <div class="success-row">
+                <span>Статус</span>
+                <span class="status-active">В обработке</span>
+            </div>
+        </div>
+
+        <div class="success-actions">
+            <a asp-controller="Product" asp-action="MainMenu" class="btn-catalog">Продолжить покупки</a>
+            <a asp-action="MyOrders" class="btn-orders">Мои заказы</a>
+        </div>
+    </div>
+</div>

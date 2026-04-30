@@ -1,0 +1,90 @@
+﻿@model WebShop.Domain.ViewModel.OrderModel.OrderViewModel
+
+@{
+    ViewData["Title"] = $"Заказ №{Model.Id}";
+}
+
+<div class="order-detail-container">
+    <a asp-action="MyOrders" class="back-link">← К списку заказов</a>
+
+    <div class="order-detail-card">
+        <div class="order-detail-header">
+            <div>
+                <h1>Заказ №@Model.Id</h1>
+                <span class="order-date">@(Model.OrderDate?.ToString("dd.MM.yyyy HH:mm") ?? "—")</span>
+            </div>
+            <span class="order-status @GetStatusClass(Model.Status)">@GetStatusName(Model.Status)</span>
+        </div>
+
+        <div class="order-detail-info">
+            <div class="info-block">
+                <h4>Покупатель</h4>
+                <p>@Model.CustomerName</p>
+                <p>@Model.CustomerEmail</p>
+            </div>
+            <div class="info-block">
+                <h4>Адрес доставки</h4>
+                <p>@Model.ShippingAddress</p>
+            </div>
+        </div>
+
+        <div class="order-detail-items">
+            <h3>Товары в заказе</h3>
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th>Товар</th>
+                        <th>Цена</th>
+                        <th>Кол-во</th>
+                        <th>Сумма</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@item.ProductName</td>
+                            <td>@item.Price.ToString("C")</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.TotalPrice.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3"><strong>Итого</strong></td>
+                        <td><strong>@Model.TotalAmount.ToString("C")</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+@functions {
+    string GetStatusClass(string status)
+    {
+        return status switch
+        {
+            "Pending" => "status-pending",
+            "Processing" => "status-processing",
+            "Shipped" => "status-shipped",
+            "Delivered" => "status-delivered",
+            "Cancelled" => "status-cancelled",
+            _ => ""
+        };
+    }
+
+    string GetStatusName(string status)
+    {
+        return status switch
+        {
+            "Pending" => "Ожидает обработки",
+            "Processing" => "В обработке",
+            "Shipped" => "Отправлен",
+            "Delivered" => "Доставлен",
+            "Cancelled" => "Отменён",
+            _ => status
+        };
+    }
+}

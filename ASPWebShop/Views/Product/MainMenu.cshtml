@@ -1,0 +1,68 @@
+﻿@model IEnumerable<WebShop.Domain.ViewModel.ProductModel.ProductViewModel>
+
+@{
+    ViewData["Title"] = "Каталог товаров";
+}
+
+<div class="catalog-header">
+    <h1>Каталог товаров</h1>
+    <p>Найдите то, что вам нужно</p>
+</div>
+
+@if (Model == null || !Model.Any())
+{
+    <div class="empty-catalog">
+        <h2>Товары пока не добавлены</h2>
+        <p>Загляните позже или станьте продавцом, чтобы добавить свой товар!</p>
+    </div>
+}
+else
+{
+    <div class="product-grid">
+        @foreach (var product in Model)
+        {
+            <div class="product-card">
+                <div class="product-image">
+                    @if (!string.IsNullOrEmpty(product.MainImageUrl))
+                    {
+                        <img src="@product.MainImageUrl" alt="@product.Name" />
+                    }
+                    else
+                    {
+                        <div class="no-image">Нет изображения</div>
+                    }
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">@product.Name</h3>
+                    <span class="product-category">@product.CategoryName</span>
+                    <p class="product-description">
+                        @(product.Description?.Length > 100
+                            ? product.Description.Substring(0, 100) + "..."
+                            : product.Description)
+                    </p>
+                    <div class="product-footer">
+                        <span class="product-price">@product.Price.ToString("C")</span>
+                        <div class="product-actions">
+                            <a asp-controller="Product" asp-action="Details" asp-route-id="@product.Id" class="btn-details">Подробнее</a>
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post" class="add-to-cart-form">
+                                <input type="hidden" name="productId" value="@product.Id" />
+                                <input type="hidden" name="quantity" value="1" />
+                                <button type="submit" class="btn-add-to-cart">В корзину</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="product-stock @(product.StockQuantity > 0 ? "in-stock" : "out-of-stock")">
+                        @if (product.StockQuantity > 0)
+                        {
+                            <span>В наличии: @product.StockQuantity шт.</span>
+                        }
+                        else
+                        {
+                            <span>Нет в наличии</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

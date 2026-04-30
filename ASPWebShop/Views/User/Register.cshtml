@@ -1,0 +1,56 @@
+﻿@model WebShop.Domain.ViewModel.UserModel.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Регистрация";
+    Layout = "_AuthLayout";
+}
+
+<div class="auth-container">
+    <h1 class="auth-title">Регистрация</h1>
+
+    <form asp-action="Register" method="post">
+        <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+        <div class="form-group">
+            <label asp-for="FirstName">Имя</label>
+            <input asp-for="FirstName" type="text" placeholder="Введите имя" />
+            <span asp-validation-for="FirstName" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="LastName">Фамилия</label>
+            <input asp-for="LastName" type="text" placeholder="Введите фамилию" />
+            <span asp-validation-for="LastName" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Email">Email</label>
+            <input asp-for="Email" type="email" placeholder="example@mail.ru" />
+            <span asp-validation-for="Email" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Password">Пароль</label>
+            <input asp-for="Password" type="password" placeholder="Минимум 6 символов" />
+            <span asp-validation-for="Password" class="field-validation-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ConfirmPassword">Подтверждение пароля</label>
+            <input asp-for="ConfirmPassword" type="password" placeholder="Повторите пароль" />
+            <span asp-validation-for="ConfirmPassword" class="field-validation-error"></span>
+        </div>
+
+        <button type="submit" class="btn-submit">Зарегистрироваться</button>
+    </form>
+
+    <p class="auth-link">
+        Уже есть аккаунт? <a asp-action="Login">Войти</a>
+    </p>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

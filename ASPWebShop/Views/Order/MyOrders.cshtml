@@ -1,0 +1,83 @@
+﻿@model IEnumerable<WebShop.Domain.ViewModel.OrderModel.OrderViewModel>
+
+@{
+    ViewData["Title"] = "Мои заказы";
+}
+
+<div class="orders-container">
+    <h1>Мои заказы</h1>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="empty-orders">
+            <div class="empty-icon">📋</div>
+            <h2>Заказов пока нет</h2>
+            <p>Вы ещё ничего не заказали</p>
+            <a asp-controller="Product" asp-action="MainMenu" class="btn-catalog">Перейти в каталог</a>
+        </div>
+    }
+    else
+    {
+        <div class="orders-list">
+            @foreach (var order in Model)
+            {
+                <div class="order-card">
+                    <div class="order-header">
+                        <div class="order-header-left">
+                            <span class="order-number">Заказ №@order.Id</span>
+                            <span class="order-date">от @(order.OrderDate?.ToString("dd.MM.yyyy HH:mm") ?? "—")</span>
+                        </div>
+                        <span class="order-status @GetStatusClass(order.Status)">@GetStatusName(order.Status)</span>
+                    </div>
+
+                    <div class="order-items">
+                        @foreach (var item in order.Items)
+                        {
+                            <div class="order-item">
+                                <span class="order-item-name">@item.ProductName</span>
+                                <span class="order-item-qty">× @item.Quantity</span>
+                                <span class="order-item-price">@item.TotalPrice.ToString("C")</span>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="order-footer">
+                        <div class="order-total">
+                            <span>Итого:</span>
+                            <strong>@order.TotalAmount.ToString("C")</strong>
+                        </div>
+                        <a asp-action="OrderDetails" asp-route-orderId="@order.Id" class="btn-details-order">Подробнее</a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@functions {
+    string GetStatusClass(string status)
+    {
+        return status switch
+        {
+            "Pending" => "status-pending",
+            "Processing" => "status-processing",
+            "Shipped" => "status-shipped",
+            "Delivered" => "status-delivered",
+            "Cancelled" => "status-cancelled",
+            _ => ""
+        };
+    }
+
+    string GetStatusName(string status)
+    {
+        return status switch
+        {
+            "Pending" => "Ожидает обработки",
+            "Processing" => "В обработке",
+            "Shipped" => "Отправлен",
+            "Delivered" => "Доставлен",
+            "Cancelled" => "Отменён",
+            _ => status
+        };
+    }
+}

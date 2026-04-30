@@ -1,0 +1,49 @@
+﻿@model WebShop.Domain.ViewModel.UserModel.UserViewModel
+
+@{
+    ViewData["Title"] = "Мой профиль";
+}
+
+<div class="profile-container">
+    <div class="profile-card">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                @Model.FirstName.Substring(0, 1)@Model.LastName.Substring(0, 1)
+            </div>
+            <h1 class="profile-name">@Model.FirstName @Model.LastName</h1>
+            <span class="profile-role @(Model.Role.ToString().ToLower())">@Model.Role</span>
+        </div>
+
+        <div class="profile-details">
+            <div class="detail-row">
+                <div class="detail-label">
+                    Email
+                </div>
+                <div class="detail-value">@Model.Email</div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">
+                    Телефон
+                </div>
+                <div class="detail-value">
+                    @(string.IsNullOrEmpty(Model.PhoneNumber) ? "Не указан" : Model.PhoneNumber)
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">
+                    Дата регистрации
+                </div>
+                <div class="detail-value">
+                    @(Model.CreatedAt?.ToString("dd.MM.yyyy") ?? "Неизвестно")
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-actions">
+            <a asp-controller="Product" asp-action="MainMenu" class="btn-back">← В каталог</a>
+            <a asp-controller="User" asp-action="Logout" class="btn-logout">Выйти</a>
+        </div>
+    </div>
+</div>

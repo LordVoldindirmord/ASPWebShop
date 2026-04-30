@@ -1,0 +1,140 @@
+﻿@model WebShop.Domain.ViewModel.ProductModel.EditProductViewModel
+
+@{
+    ViewData["Title"] = "Редактирование товара";
+}
+
+<div class="create-product-container">
+    <div class="create-product-card">
+        <h1 class="create-title">Редактировать товар</h1>
+
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+            <div class="form-group">
+                <label asp-for="Name">Название товара</label>
+                <input asp-for="Name" type="text" />
+                <span asp-validation-for="Name" class="field-validation-error"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Description">Описание</label>
+                <textarea asp-for="Description" rows="5"></textarea>
+                <span asp-validation-for="Description" class="field-validation-error"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group form-half">
+                    <label asp-for="Price">Цена (₽)</label>
+                    <input asp-for="Price" type="number" step="0.01" min="0.01" />
+                    <span asp-validation-for="Price" class="field-validation-error"></span>
+                </div>
+                <div class="form-group form-half">
+                    <label asp-for="StockQuantity">Количество на складе</label>
+                    <input asp-for="StockQuantity" type="number" min="0" />
+                    <span asp-validation-for="StockQuantity" class="field-validation-error"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CategoryId">Категория</label>
+                <select asp-for="CategoryId">
+                    <option value="">Выберите категорию...</option>
+                    @if (ViewBag.Categories != null)
+                    {
+                        @foreach (var category in ViewBag.Categories)
+                        {
+                            <option value="@category.Id" selected="@(category.Id == Model.CategoryId ? "selected" : null)">@category.Name</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="CategoryId" class="field-validation-error"></span>
+            </div>
+
+            @* Текущее главное изображение *@
+            @if (!string.IsNullOrEmpty(Model.ExistingMainImageUrl))
+            {
+                <div class="form-group">
+                    <label>Текущее главное изображение</label>
+                    <img src="@Model.ExistingMainImageUrl" alt="Главное изображение" style="max-width:200px; border-radius:8px;" />
+                </div>
+            }
+
+            <div class="form-group">
+                <label>Новое главное изображение (оставьте пустым, чтобы не менять)</label>
+                <div class="file-upload">
+                    <input type="file" name="newMainImage" accept="image/*" class="file-input" id="newMainImage" />
+                    <label for="newMainImage" class="file-label">
+                        <span class="file-icon">📷</span>
+                        <span id="newMainImageName">Выберите файл</span>
+                    </label>
+                </div>
+            </div>
+
+            @* Текущие дополнительные изображения с возможностью удаления *@
+            @if (Model.ExistingAdditionalImages != null && Model.ExistingAdditionalImages.Any())
+            {
+                <div class="form-group">
+                    <label>Текущие дополнительные изображения (нажмите × чтобы удалить)</label>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        @for (int i = 0; i < Model.ExistingAdditionalImages.Count; i++)
+                        {
+                            <div style="position:relative; display:inline-block;">
+                                <img src="@Model.ExistingAdditionalImages[i]" style="width:80px; height:80px; object-fit:cover; border-radius:8px;" />
+                                <input type="checkbox" name="imagesToDelete" value="@i" id="img-del-@i" style="display:none;" />
+                                <label for="img-del-@i" style="position:absolute; top:-8px; right:-8px; background:#e74c3c; color:white; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; font-size:16px; cursor:pointer; box-shadow:0 2px 4px rgba(0,0,0,0.2);" title="Удалить изображение">
+                                    ×
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <div class="form-group">
+                <label>Добавить новые изображения</label>
+                <div class="file-upload">
+                    <input type="file" name="newAdditionalImages" accept="image/*" multiple class="file-input" id="newAdditionalImages" />
+                    <label for="newAdditionalImages" class="file-label">
+                        <span class="file-icon">🖼️</span>
+                        <span id="newAdditionalImagesName">Выберите файлы</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <a asp-action="MyProducts" class="btn-cancel">Отмена</a>
+                <button type="submit" class="btn-submit">Сохранить изменения</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        document.getElementById('newMainImage').addEventListener('change', function() {
+            document.getElementById('newMainImageName').textContent = this.files[0]?.name || 'Выберите файл';
+        });
+        document.getElementById('newAdditionalImages').addEventListener('change', function() {
+            document.getElementById('newAdditionalImagesName').textContent = 'Выбрано: ' + this.files.length;
+        });
+
+        // Визуальное подтверждение удаления
+        document.querySelectorAll('input[name="imagesToDelete"]').forEach(function(checkbox) {
+            checkbox.addEventListener('change', function() {
+                var label = this.nextElementSibling;
+                if (this.checked) {
+                    label.style.background = '#c0392b';
+                    label.parentElement.querySelector('img').style.opacity = '0.4';
+                } else {
+                    label.style.background = '#e74c3c';
+                    label.parentElement.querySelector('img').style.opacity = '1';
+                }
+            });
+        });
+    </script>
+}

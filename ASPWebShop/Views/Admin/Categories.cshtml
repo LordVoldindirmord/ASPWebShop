@@ -1,0 +1,45 @@
+﻿@model IEnumerable<WebShop.Domain.ViewModel.CategoryModel.CategoryViewModel>
+@{
+    ViewData["Title"] = "Управление категориями";
+}
+
+<div class="my-products-container">
+    <h1>Категории</h1>
+
+    <form asp-action="AddCategory" method="post" class="form-row" style="margin-bottom:20px; gap:10px;">
+        <input type="text" name="name" placeholder="Название" required style="flex:1;" class="form-control" />
+        <input type="text" name="description" placeholder="Описание" style="flex:2;" class="form-control" />
+        <button type="submit" class="btn-add-product">Добавить</button>
+    </form>
+
+    <div class="products-table-wrapper">
+        <table class="products-table">
+            <thead>
+                <tr><th>ID</th><th>Название</th><th>Описание</th><th>Товаров</th><th>Действия</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var cat in Model)
+                {
+                    <tr>
+                        <td>@cat.Id</td>
+                        <td>@cat.Name</td>
+                        <td>@cat.Description</td>
+                        <td>@cat.ProductCount</td>
+                        <td>
+                            <form asp-action="EditCategory" method="post" style="display:flex; gap:6px; margin-bottom:4px;">
+                                <input type="hidden" name="id" value="@cat.Id" />
+                                <input type="text" name="name" value="@cat.Name" style="width:120px;" class="form-control" />
+                                <input type="text" name="description" value="@cat.Description" style="width:160px;" class="form-control" />
+                                <button type="submit" class="btn-action btn-edit">Сохранить</button>
+                            </form>
+                            <form asp-action="DeleteCategory" method="post">
+                                <input type="hidden" name="id" value="@cat.Id" />
+                                <button type="submit" class="btn-action btn-toggle" onclick="return confirm('Удалить?')">Удалить</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

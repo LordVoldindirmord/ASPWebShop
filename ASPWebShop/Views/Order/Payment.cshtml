@@ -1,0 +1,72 @@
+﻿@model WebShop.Domain.ViewModel.OrderModel.OrderViewModel
+@{
+    ViewData["Title"] = $"Оплата заказа №{Model.Id}";
+}
+
+<div class="payment-container">
+    <h1>Оплата заказа №@Model.Id</h1>
+
+    <div class="payment-layout">
+        <div class="payment-card-form">
+            <div class="payment-card">
+                <h3>Банковская карта</h3>
+                <form asp-action="ProcessPayment" method="post">
+                    <input type="hidden" name="orderId" value="@Model.Id" />
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-group">
+                        <label>Номер карты</label>
+                        <div class="card-input-wrapper">
+                            <input type="text" name="cardNumber" class="card-input" placeholder="0000 0000 0000 0000" maxlength="19" autocomplete="off" />
+                            <div class="card-icons">
+                                <span>💳</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group form-half">
+                            <label>Срок действия</label>
+                            <input type="text" name="expiryDate" placeholder="ММ/ГГ" maxlength="5" autocomplete="off" />
+                        </div>
+                        <div class="form-group form-half">
+                            <label>CVV</label>
+                            <input type="password" name="cvv" placeholder="•••" maxlength="3" autocomplete="off" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Имя держателя карты</label>
+                        <input type="text" name="cardHolder" placeholder="IVAN PETROV" autocomplete="off" />
+                    </div>
+
+                    <button type="submit" class="btn-pay">
+                        <span>🔒</span> Оплатить @Model.TotalAmount.ToString("C")
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="payment-info-section">
+            <div class="payment-info-card">
+                <h3>Информация о заказе</h3>
+                <div class="info-row">
+                    <span>Сумма заказа</span>
+                    <strong>@Model.TotalAmount.ToString("C")</strong>
+                </div>
+                <div class="info-row">
+                    <span>Товаров</span>
+                    <span>@(Model.Items?.Sum(i => i.Quantity) ?? 0) шт.</span>
+                </div>
+                <div class="info-row">
+                    <span>Адрес доставки</span>
+                    <span>@Model.ShippingAddress</span>
+                </div>
+                <div class="test-card-info">
+                    <h4>Тестовые данные</h4>
+                    <p>Любые 16 цифр номера карты<br>Любое имя держателя<br>Любой срок и 3 цифры CVV</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

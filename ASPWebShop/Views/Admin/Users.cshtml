@@ -1,0 +1,39 @@
+﻿@using WebShop.Domain.Enum
+@model IEnumerable<WebShop.Domain.ViewModel.UserModel.UserViewModel>
+@{
+    ViewData["Title"] = "Управление пользователями";
+}
+
+<div class="my-products-container">
+    <h1>Пользователи</h1>
+    <a asp-action="Categories" class="btn-add-product" style="margin-bottom:20px; display:inline-block;">Управление категориями</a>
+    <div class="products-table-wrapper">
+        <table class="products-table">
+            <thead>
+                <tr><th>ID</th><th>Имя</th><th>Email</th><th>Роль</th><th>Действие</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var user in Model)
+                {
+                    <tr>
+                        <td>@user.Id</td>
+                        <td>@user.FirstName @user.LastName</td>
+                        <td>@user.Email</td>
+                        <td>@user.Role</td>
+                        <td>
+                            <form asp-action="ChangeRole" method="post" style="display:flex; gap:6px;">
+                                <input type="hidden" name="userId" value="@user.Id" />
+                                <select name="newRole" class="form-select" style="width:140px;">
+                                    <option value="Customer" selected="@(user.Role == UserRole.Customer ? "selected" : null)">Customer</option>
+                                    <option value="Seller" selected="@(user.Role == UserRole.Seller ? "selected" : null)">Seller</option>
+                                    <option value="Administrator" selected="@(user.Role == UserRole.Administrator ? "selected" : null)">Administrator</option>
+                                </select>
+                                <button type="submit" class="btn-action btn-edit">Сменить</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

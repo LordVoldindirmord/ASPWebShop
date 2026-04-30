@@ -1,0 +1,50 @@
+﻿@model WebShop.Domain.ViewModel.OrderModel.CreateOrderViewModel
+@{
+    var cart = ViewBag.Cart as WebShop.Domain.ViewModel.CartModel.CartViewModel;
+    ViewData["Title"] = "Оформление заказа";
+}
+
+<div class="checkout-container">
+    <h1>Оформление заказа</h1>
+
+    <div class="checkout-layout">
+        <div class="checkout-form-section">
+            <div class="checkout-card">
+                <h3>Адрес доставки</h3>
+                <form asp-action="Checkout" method="post">
+                    <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+                    <div class="form-group">
+                        <label asp-for="ShippingAddress">Адрес</label>
+                        <textarea asp-for="ShippingAddress" rows="3" placeholder="Город, улица, дом, квартира, индекс"></textarea>
+                        <span asp-validation-for="ShippingAddress" class="field-validation-error"></span>
+                    </div>
+
+                    <button type="submit" class="btn-submit-order">Перейти к оплате</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="checkout-summary-section">
+            <div class="checkout-summary-card">
+                <h3>Ваш заказ</h3>
+                @if (cart?.Items != null)
+                {
+                    @foreach (var item in cart.Items)
+                    {
+                        <div class="summary-item">
+                            <span class="summary-item-name">@item.ProductName × @item.Quantity</span>
+                            <span class="summary-item-price">@item.TotalPrice.ToString("C")</span>
+                        </div>
+                    }
+                }
+                <div class="summary-divider"></div>
+                <div class="summary-total">
+                    <span>Итого</span>
+                    <span>@(cart?.TotalAmount.ToString("C") ?? "0")</span>
+                </div>
+            </div>
+            <a asp-controller="Cart" asp-action="Cart" class="back-to-cart">← Вернуться в корзину</a>
+        </div>
+    </div>
+</div>
